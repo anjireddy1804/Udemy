@@ -29,4 +29,5 @@ sudo yum install libvirt -y
 sudo sysctl fs.protected_regular=0
 sudo usermod -aG root libvirt
 sudo minikube start --vm-driver=none
-
+Some versions of Linux have a version of docker that is newer than what Kubernetes expects. To overwrite this, run minikube with the following parameters: 
+sudo -E minikube start --driver=none --kubernetes-version v1.11.8 --extra-config kubeadm.ignore-preflight-errors=SystemVerification
