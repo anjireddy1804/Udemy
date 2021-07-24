@@ -31,3 +31,6 @@ sudo usermod -aG root libvirt
 sudo minikube start --vm-driver=none
 Some versions of Linux have a version of docker that is newer than what Kubernetes expects. To overwrite this, run minikube with the following parameters: 
 sudo -E minikube start --driver=none --kubernetes-version v1.11.8 --extra-config kubeadm.ignore-preflight-errors=SystemVerification
+===========
+minikube installation on RHEL8
+https://snapcraft.io/install/minikube/rhel --use this link
