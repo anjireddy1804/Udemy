@@ -1,28 +1,47 @@
-curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+yum install git -y
+yum install unzip -y
+yum install ansible -y
+amazon-linux-extras install docker -y
+yum update -y
+yum install docker -y
+service docker start
+usermod -a -G docker ec2-user
+amazon-linux-extras install epel -y
+yum update -y
+yum install ansible -y
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
 chmod +x ./kubectl
-sudo mv ./kubectl /usr/local/bin/kubectl
-sudo apt-get update &&  sudo apt-get install docker.io -y
-curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
-apt install conntrack -y
-VERSION="v1.24.1"
-curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/crictl-${VERSION}-linux-amd64.tar.gz --output crictl-${VERSION}-linux-amd64.tar.gz
-sudo tar zxvf crictl-$VERSION-linux-amd64.tar.gz -C /usr/local/bin
-rm -f crictl-$VERSION-linux-amd64.tar.gz
-sudo su
+mv ./kubectl /usr/local/bin/kubectl
+mv /usr/local/bin/kubectl /usr/bin/kubectl
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+chmod +x minikube
+mv minikube /usr/local/bin/
+mv /usr/local/bin/minikube /usr/bin/
+yum install libvirt -y
+sysctl fs.protected_regular=0
+useradd libvirt -g libvirt
+usermod -aG root libvirt
+yum install conntrack -y 
+git clone https://github.com/Mirantis/cri-dockerd.git
 wget https://storage.googleapis.com/golang/getgo/installer_linux
 chmod +x ./installer_linux
 ./installer_linux
 source ~/.bash_profile
 
-
 cd cri-dockerd
 mkdir bin
 go build -o bin/cri-dockerd
 mkdir -p /usr/local/bin
- install -o root -g root -m 0755 bin/cri-dockerd /usr/local/bin/cri-dockerd
- cp -a packaging/systemd/* /etc/systemd/system
- sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
- systemctl daemon-reload
- systemctl enable cri-docker.service
- systemctl enable --now cri-docker.socket
-minikube start --driver=none
+install -o root -g root -m 0755 bin/cri-dockerd /usr/local/bin/cri-dockerd
+cp -a packaging/systemd/* /etc/systemd/system
+sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
+mv /usr/local/bin/cri-dockerd /usr/bin/
+systemctl daemon-reload
+systemctl enable cri-docker.service
+systemctl enable --now cri-docker.socket
+VERSION="v1.26.0" # check latest version in /releases page
+wget https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/crictl-$VERSION-linux-amd64.tar.gz
+sudo tar zxvf crictl-$VERSION-linux-amd64.tar.gz -C /usr/local/bin
+mv /usr/local/bin /usr/bin/
+rm -f crictl-$VERSION-linux-amd64.tar.gz
+minikube start --vm-driver=none
