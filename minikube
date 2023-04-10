@@ -44,4 +44,7 @@ wget https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/cri
 sudo tar zxvf crictl-$VERSION-linux-amd64.tar.gz -C /usr/local/bin
 mv /usr/local/bin /usr/bin/
 rm -f crictl-$VERSION-linux-amd64.tar.gz
-minikube start --vm-driver=none
+minikube start
+wget https://get.helm.sh/helm-canary-linux-amd64.tar.gz
+tar -xvf helm-canary-linux-amd64.tar.gz
+mv linux-amd64/helm /usr/local/bin/helm
